@@ -1,0 +1,245 @@
+{
+  "$comment": "Africa's Talking Marketplace listing for Amina Stays, generated from marketplace/README.md (which explains each field). Replace the <placeholders>.",
+  "name": "Amina Stays",
+  "slug": "amina-stays",
+  "description": {
+    "short": "Direct bookings and guest care for hotels, guesthouses and short-stay hosts, on the web, USSD, SMS and voice, built on Africa's Talking.",
+    "full": "**Amina Stays** gives hotels, guesthouses and short-stay hosts one booking and guest-care system that works on every phone. Guests book and get help on the website, or by **USSD, SMS and voice** through Africa's Talking, so a guest with a feature phone or no data is served like everyone else.\n\n### What it does\n- **Bookings on every channel.** Search, all-in prices and card checkout on the web; a full booking by USSD (any phone, no data), by text in English, Kiswahili, French, German or Italian, or by calling the voice menu. One calendar, kept in sync with Airbnb and Booking.com, so a room is never sold twice.\n- **Support desk with call-backs.** Every request gets a reference on whichever channel it arrives. Reply from the console or by SMS, or tap Call: Africa's Talking rings you first, then connects you to the guest without showing their number. Unanswered requests escalate by SMS, then by phone.\n- **Service alerts.** Tell the guests a power, water or Wi-Fi outage affects before they ask, and again when it's fixed. Guests caught by a Wi-Fi or power cut get a mobile data bundle.\n- **Local guide.** Beaches, food, transport and what's on, by USSD, SMS, voice and web, closest to the guest's home first.\n- **Rewards in airtime and data.** Points for stays and reviews, swapped for airtime or data bundles; a referral pays both guests.\n- **Safer check-in.** The door code goes out by SMS on arrival morning, only once the balance is paid, the guest register is complete and an Africa's Talking **SIM-swap check** passes.\n- **Runs the stay.** Messages from booking to review, breakfast orders for the kitchen, cleaning tasks, an SOS line that alerts the host and staff, an encrypted guest register and the tourism levy return.\n\n### Who it's for\nHosts with a handful to a few dozen rooms or apartments (guesthouses, small hotels, serviced apartments, holiday homes), especially where many guests use feature phones or have little data. Built for Kenya's coast: prices are in KES and M-Pesa is supported; SMS, USSD and voice work wherever Africa's Talking does.\n\n### What you set up in Africa's Talking\nYou use your own Africa's Talking account; SMS, USSD, voice, airtime and data are billed to it.\n\n1. A live app (or the sandbox to try it): its username and API key.\n2. An approved **sender ID** or a two-way **shortcode** for SMS (without one, messages only reach Airtel numbers in Kenya).\n3. A **USSD code**, and a **voice number** for calls (Voice has no sandbox).\n4. Optionally, a **Mobile Data** product and airtime balance for rewards and outage bundles.\n5. These callback URLs, where `<instance>` is your instance's address and `<secret>` your `AT_WEBHOOK_SECRET`:\n\n| Product | Callback URL |\n|---|---|\n| USSD | `https://<instance>/at/<secret>/ussd` |\n| USSD end of session (optional) | `https://<instance>/at/<secret>/ussd/events` |\n| SMS incoming messages | `https://<instance>/at/<secret>/sms/incoming` |\n| SMS delivery reports | `https://<instance>/at/<secret>/sms/delivery` |\n| SMS opt-out | `https://<instance>/at/<secret>/sms/optout` |\n| Voice | `https://<instance>/at/<secret>/voice` |\n| Airtime status | `https://<instance>/at/<secret>/airtime/status` |\n| Mobile Data status | `https://<instance>/at/<secret>/data/status` |\n| SIM Swap (Insights) | `https://<instance>/at/<secret>/insights/simswap` |\n\nCard payments go to your own Stripe account (webhook: `https://<instance>/api/payments/stripe/webhook`); M-Pesa through Safaricom's Daraja can be added after its Go-Live. To look around first, deploy with `DEMO=1`: demo homes and bookings, and a Demo Lab that drives USSD, SMS and voice in the browser, no handset needed."
+  },
+  "logo": {
+    "png": "logo.png",
+    "png1024": "logo-1024.png",
+    "svg": "logo.svg"
+  },
+  "source": {
+    "image": "<Registry Host>/<Username>/amina-stays:v1.0.0",
+    "imageUriPattern": "^(?:([a-zA-Z0-9][a-zA-Z0-9.-]+)\\/([a-zA-Z0-9_-]+)\\/)?([a-zA-Z0-9_-]+):([a-zA-Z0-9_.-]+)$",
+    "platform": "linux/amd64",
+    "gitUri": "https://github.com/David-0chieng/Amina_stays"
+  },
+  "database": "POSTGRES",
+  "container": {
+    "port": 8080,
+    "portVariable": "PORT",
+    "healthCheck": "/health",
+    "reservedPort": 8000
+  },
+  "products": [
+    "USSD",
+    "Voice",
+    "Airtime",
+    "Insights",
+    "Bulk SMS",
+    "Mobile Data"
+  ],
+  "industries": [
+    "Other"
+  ],
+  "pricingPlans": [
+    {
+      "name": "Starter",
+      "currencyCode": "KES",
+      "amount": 2500,
+      "billingFrequency": "Monthly",
+      "trialDays": 14,
+      "description": "Up to 3 homes or rooms. Bookings on the web, USSD, SMS and voice; support desk, service alerts, local guide, rewards and the host console. Africa's Talking usage is billed to your own AT account."
+    },
+    {
+      "name": "Business",
+      "currencyCode": "KES",
+      "amount": 7500,
+      "billingFrequency": "Monthly",
+      "trialDays": 14,
+      "description": "Up to 15 homes or rooms, with everything in Starter: for guesthouses and small hotels with staff (cleaners, cook, caretaker, security). Africa's Talking usage is billed to your own AT account."
+    }
+  ],
+  "environment": [
+    {
+      "key": "PUBLIC_URL",
+      "required": true,
+      "requirement": "Yes",
+      "secret": false,
+      "description": "The instance's https address: its Domain on the instance page, or your own domain. Links in SMS (trips, card payments), payment returns and logins depend on it: without it, logging in and booking from the browser fail. Set it after the first deploy if the address isn't known before, then restart the instance.",
+      "example": "https://your-app.africastalking.marketplace.dev"
+    },
+    {
+      "key": "SECRET_KEY",
+      "required": true,
+      "requirement": "Yes",
+      "secret": true,
+      "description": "Signs logins and login codes. Keep it stable: changing it logs everyone out. With DEMO=1 and no key, a random one is used on each start.",
+      "example": "python3 -c \"import secrets; print(secrets.token_urlsafe(50))\""
+    },
+    {
+      "key": "ID_ENCRYPTION_KEY",
+      "required": true,
+      "requirement": "Yes",
+      "secret": true,
+      "description": "Encrypts guests' ID and passport numbers (Kenya's Data Protection Act). The container won't start without a valid one. Never change it once guests have registered: their ID numbers would become unreadable.",
+      "example": "python3 -c \"import base64, os; print(base64.urlsafe_b64encode(os.urandom(32)).decode())\""
+    },
+    {
+      "key": "AMINA_PHONE",
+      "required": true,
+      "requirement": "Yes",
+      "secret": false,
+      "description": "The host's own phone number: the login for the host console at /host (made the owner account on every start). Set it before the first start: it also becomes the Host phone in Settings → Business (relayed questions, SOS calls, the morning digest), which can be changed there later.",
+      "example": "+254712345678"
+    },
+    {
+      "key": "AT_USERNAME",
+      "required": false,
+      "requirement": "To go live",
+      "secret": false,
+      "description": "The Africa's Talking app username; sandbox sends to the simulator only.",
+      "example": "sandbox"
+    },
+    {
+      "key": "AT_API_KEY",
+      "required": false,
+      "requirement": "To go live",
+      "secret": true,
+      "description": "That app's API key. Without it every SMS, call, airtime and data top-up is a dry run (logged, not sent).",
+      "example": "(from the AT dashboard)"
+    },
+    {
+      "key": "AT_SENDER_ID",
+      "required": false,
+      "requirement": "One of the two",
+      "secret": false,
+      "description": "An approved alphanumeric sender ID for outgoing SMS.",
+      "example": "AMINASTAYS"
+    },
+    {
+      "key": "AT_SMS_NUMBER",
+      "required": false,
+      "requirement": "One of the two",
+      "secret": false,
+      "description": "The two-way shortcode or number for \"Ask Amina\" (incoming SMS), shown to guests.",
+      "example": "20880"
+    },
+    {
+      "key": "AT_USSD_CODE",
+      "required": false,
+      "requirement": "For USSD",
+      "secret": false,
+      "description": "The USSD code shown to guests. Add it as its own row: the bulk box drops everything from a # (the container puts a missing closing # back).",
+      "example": "*384*12345#"
+    },
+    {
+      "key": "AT_VOICE_NUMBER",
+      "required": false,
+      "requirement": "For voice",
+      "secret": false,
+      "description": "The voice number, in international format.",
+      "example": "+254711082000"
+    },
+    {
+      "key": "AT_DATA_PRODUCT",
+      "required": false,
+      "requirement": "No",
+      "secret": false,
+      "description": "The Mobile Data product name for welcome, outage and reward bundles.",
+      "example": "AminaData"
+    },
+    {
+      "key": "AT_WEBHOOK_SECRET",
+      "required": false,
+      "requirement": "Recommended",
+      "secret": true,
+      "description": "Puts a secret in every callback URL (/at/<secret>/…), so nobody can post fake USSD, SMS, voice or payment callbacks. Use letters and digits only.",
+      "example": "python3 -c \"import secrets; print(secrets.token_hex(24))\""
+    },
+    {
+      "key": "DEMO",
+      "required": false,
+      "requirement": "No",
+      "secret": false,
+      "description": "1 adds the Demo Lab, demo shortcuts and login codes shown on screen, so anyone can log in as the host: for trying it out only, with AT_USERNAME=sandbox (the demo data has made-up phone numbers). Default 0.",
+      "example": "0"
+    },
+    {
+      "key": "SEED_DEMO",
+      "required": false,
+      "requirement": "No",
+      "secret": false,
+      "description": "Demo homes and bookings on the first start. Empty: only with DEMO=1; 1: even without it; 0: never. A database that already has homes is never seeded.",
+      "example": "(empty)"
+    },
+    {
+      "key": "STRIPE_SECRET_KEY",
+      "required": false,
+      "requirement": "No",
+      "secret": true,
+      "description": "Card payments through Stripe Checkout. Empty: a simulated card page (no money moves).",
+      "example": "sk_live_…"
+    },
+    {
+      "key": "STRIPE_WEBHOOK_SECRET",
+      "required": false,
+      "requirement": "No",
+      "secret": true,
+      "description": "Signing secret of a Stripe webhook to https://<instance>/api/payments/stripe/webhook for the checkout.session.completed, checkout.session.async_payment_succeeded, checkout.session.async_payment_failed and checkout.session.expired events: confirms card payments at once (otherwise on the guest's return, or within 2 minutes).",
+      "example": "whsec_…"
+    },
+    {
+      "key": "GUIDE_REGION",
+      "required": false,
+      "requirement": "No",
+      "secret": false,
+      "description": "Added to local-guide map searches (\"Fort Jesus, Old Town, Kenya\"). Default Kenya.",
+      "example": "Kenya"
+    },
+    {
+      "key": "WEB_CONCURRENCY",
+      "required": false,
+      "requirement": "No",
+      "secret": false,
+      "description": "API worker processes (4 threads each, roughly 100 MB of memory each). Default 2; 1 on a 512 MB instance.",
+      "example": "2"
+    }
+  ],
+  "callbacks": [
+    {
+      "product": "USSD",
+      "url": "https://<instance>/at/<secret>/ussd"
+    },
+    {
+      "product": "USSD end of session (optional)",
+      "url": "https://<instance>/at/<secret>/ussd/events"
+    },
+    {
+      "product": "SMS incoming messages",
+      "url": "https://<instance>/at/<secret>/sms/incoming"
+    },
+    {
+      "product": "SMS delivery reports",
+      "url": "https://<instance>/at/<secret>/sms/delivery"
+    },
+    {
+      "product": "SMS opt-out",
+      "url": "https://<instance>/at/<secret>/sms/optout"
+    },
+    {
+      "product": "Voice",
+      "url": "https://<instance>/at/<secret>/voice"
+    },
+    {
+      "product": "Airtime status",
+      "url": "https://<instance>/at/<secret>/airtime/status"
+    },
+    {
+      "product": "Mobile Data status",
+      "url": "https://<instance>/at/<secret>/data/status"
+    },
+    {
+      "product": "SIM Swap (Insights)",
+      "url": "https://<instance>/at/<secret>/insights/simswap"
+    },
+    {
+      "product": "Stripe webhook (cards)",
+      "url": "https://<instance>/api/payments/stripe/webhook"
+    }
+  ],
+  "termsAccepted": true
+}

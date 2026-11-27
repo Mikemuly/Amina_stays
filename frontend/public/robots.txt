@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /host
+Disallow: /demo
+Disallow: /pay/
+Disallow: /trips
+Disallow: /account
+Disallow: /messages

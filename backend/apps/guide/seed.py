@@ -1,0 +1,517 @@
+"""Demo content for the local guide: real places on the Kenyan coast, written as a host would.
+
+Opening hours and fees are approximate and editable in the console (Host > Local guide). Map links search by
+name, so a slightly-off coordinate (used only to sort by distance) never sends a guest to the wrong place."""
+
+PLACES = [
+    # ---------- sights & history ----------
+    {
+        "name": "Fort Jesus",
+        "category": "sights",
+        "area": "old-town",
+        "featured": True,
+        "summary": "16th-century Portuguese fort and museum, a UNESCO World Heritage Site.",
+        "summary_sw": "Ngome ya Kireno ya karne ya 16 na makumbusho, urithi wa dunia wa UNESCO.",
+        "description": "Built by the Portuguese in the 1590s to guard the old harbour, the fort changed hands nine times "
+        "between the Portuguese, Omani Arabs and British. Inside: the museum, Omani house, ramparts with harbour views "
+        "and 400-year-old sailors' graffiti.",
+        "tips": "Go at 8am before the heat and the tour groups. Official guides wear badges; agree the fee first.",
+        "hours": "Daily 8am-6pm",
+        "price": "About KES 1,200 for visitors; less for residents and citizens",
+        "lat": -4.0629,
+        "lng": 39.6795,
+    },
+    {
+        "name": "Old Town heritage lanes",
+        "category": "sights",
+        "area": "old-town",
+        "featured": True,
+        "summary": "Carved Swahili doors, coral-stone houses, spice shops and the old harbour.",
+        "summary_sw": "Milango ya kuchongwa, nyumba za mawe, maduka ya viungo na bandari ya zamani.",
+        "description": "A maze of narrow lanes between Fort Jesus and the Old Port: balconied merchant houses, the "
+        "Leven Steps down to the water, and coffee sellers pouring kahawa chungu from brass pots.",
+        "tips": "Cover shoulders and knees. Ask before photographing people. Take a guide after dark.",
+        "hours": "Best 8-11am or after 4pm",
+        "price": "Free to walk; guided walks about KES 1,500",
+        "lat": -4.0612,
+        "lng": 39.6786,
+    },
+    {
+        "name": "Mombasa Tusks",
+        "category": "sights",
+        "area": "old-town",
+        "summary": "The city's landmark arches of crossed aluminium tusks on Moi Avenue.",
+        "summary_sw": "Pembe za Ndovu za Moi Avenue, alama maarufu ya mji wa Mombasa.",
+        "description": "Two pairs of crossed tusks built in 1952 for a royal visit, now the symbol of the city. A quick "
+        "photo stop on the way between town and the Old Town.",
+        "tips": "Busy traffic: cross at the lights. Combine with Moi Avenue's curio shops.",
+        "hours": "Always open",
+        "price": "Free",
+        "lat": -4.0617,
+        "lng": 39.6669,
+    },
+    {
+        "name": "Gede Ruins",
+        "category": "sights",
+        "area": None,
+        "summary": "Haunting ruins of a 13th-century Swahili town in the forest near Watamu.",
+        "summary_sw": "Magofu ya mji wa Waswahili wa karne ya 13 msituni karibu na Watamu.",
+        "description": "Palaces, mosques and houses of a once-wealthy trading town, swallowed by coastal forest. "
+        "About 2 hours north of Mombasa - a good day trip with Watamu's beaches.",
+        "tips": "Wear closed shoes and insect repellent. Leave early to beat the traffic north.",
+        "hours": "Daily 7am-6pm",
+        "price": "Entry fee; residents pay less",
+        "lat": -3.3092,
+        "lng": 40.0170,
+    },
+    {
+        "name": "Jumba la Mtwana",
+        "category": "sights",
+        "area": "mtwapa",
+        "summary": "Quiet 14th-century Swahili ruins on a beach just north of Mtwapa.",
+        "summary_sw": "Magofu tulivu ya Waswahili ya karne ya 14 ufukweni kaskazini mwa Mtwapa.",
+        "description": "The 'house of the slave master': mosques, tombs and houses among baobabs, right above a "
+        "quiet beach. Rarely crowded.",
+        "tips": "Pair it with a late lunch and sunset on Mtwapa Creek.",
+        "hours": "Daily 8am-6pm",
+        "price": "Small entry fee",
+        "lat": -3.9380,
+        "lng": 39.7700,
+    },
+    # ---------- beaches & sea ----------
+    {
+        "name": "Diani Beach",
+        "category": "beaches",
+        "area": "diani",
+        "featured": True,
+        "summary": "17 km of powder-white sand and calm reef water on the south coast.",
+        "summary_sw": "Kilomita 17 za mchanga mweupe na maji tulivu ya mwamba upande wa kusini.",
+        "description": "Regularly voted one of Africa's best beaches. The reef keeps the lagoon calm; at low tide "
+        "you can walk out to rock pools. Kitesurfing season is roughly December to March.",
+        "tips": "Swim at high tide. Book boat trips only with licensed operators and politely decline beach touts.",
+        "hours": "Always open",
+        "price": "Free",
+        "lat": -4.3159,
+        "lng": 39.5852,
+    },
+    {
+        "name": "Nyali Beach",
+        "category": "beaches",
+        "area": "nyali",
+        "summary": "Long, reef-sheltered beach a short ride from Nyali's cafes and malls.",
+        "summary_sw": "Ufukwe mrefu uliokingwa na mwamba, karibu na mikahawa ya Nyali.",
+        "description": "Wide sand at low tide and gentle water at high tide, with camel rides and coconut sellers. "
+        "Weekends are lively with local families.",
+        "tips": "Keep valuables at home. Swim where others swim and at high tide.",
+        "hours": "Always open",
+        "price": "Free",
+        "lat": -4.0420,
+        "lng": 39.7250,
+    },
+    {
+        "name": "Bamburi Beach",
+        "category": "beaches",
+        "area": "bamburi",
+        "summary": "Family-friendly beach with shallow water and plenty of space.",
+        "summary_sw": "Ufukwe mzuri kwa familia, maji ya kina kifupi na nafasi kubwa.",
+        "description": "The reef is close to shore here, so the lagoon is shallow and calm at high tide - good for "
+        "children. Glass-bottom boats leave for the Marine Park.",
+        "tips": "Bring reef shoes for the coral flats at low tide.",
+        "hours": "Always open",
+        "price": "Free",
+        "lat": -3.9967,
+        "lng": 39.7330,
+    },
+    {
+        "name": "Mombasa Marine National Park",
+        "category": "beaches",
+        "area": "nyali",
+        "summary": "Snorkelling and glass-bottom boats over the coral reef off Nyali and Bamburi.",
+        "summary_sw": "Kuogelea na kuangalia matumbawe kwa boti yenye sakafu ya kioo.",
+        "description": "A protected stretch of reef with parrotfish, starfish and sea urchins. Trips go out at low "
+        "tide when the water is clearest.",
+        "tips": "Go with a KWS-licensed boat; the park fee is separate from the boat fee.",
+        "hours": "Trips by the tide, usually morning",
+        "price": "KWS park fee plus boat hire",
+        "lat": -4.0167,
+        "lng": 39.7333,
+    },
+    {
+        "name": "Kisite-Mpunguti & Wasini Island",
+        "category": "beaches",
+        "area": "diani",
+        "featured": True,
+        "summary": "Dolphins, snorkelling and a seafood lunch on Wasini: the south coast's best day out.",
+        "summary_sw": "Pomboo, kuogelea na chakula cha baharini Wasini: safari bora ya pwani ya kusini.",
+        "description": "Dhows leave Shimoni (about 1 hour south of Diani) for the marine park, where dolphins are "
+        "often seen, then stop on Wasini Island for crab and coconut rice.",
+        "tips": "Full day: book the night before with a licensed operator. Bring sunscreen and a hat.",
+        "hours": "Full-day trips from about 8am",
+        "price": "Package trips include park fees and lunch",
+        "lat": -4.6550,
+        "lng": 39.3770,
+    },
+    # ---------- nature & wildlife ----------
+    {
+        "name": "Haller Park",
+        "category": "nature",
+        "area": "bamburi",
+        "featured": True,
+        "summary": "Giraffes, hippos and giant tortoises in a forest grown on an old cement quarry.",
+        "summary_sw": "Twiga, viboko na kobe wakubwa katika msitu uliopandwa kwenye machimbo ya zamani.",
+        "description": "A celebrated restoration project: the quarry became forest, ponds and grassland. Walk the "
+        "trails and catch the giraffe feeding in the afternoon.",
+        "tips": "Great with children. Go after 3pm for feeding time and cooler air.",
+        "hours": "Daily about 8am-5pm",
+        "price": "Entry fee; residents pay less",
+        "lat": -4.0039,
+        "lng": 39.7258,
+    },
+    {
+        "name": "Colobus Conservation",
+        "category": "nature",
+        "area": "diani",
+        "summary": "Guided walks to see Diani's rare colobus monkeys and learn how they're protected.",
+        "summary_sw": "Matembezi ya kuwaona tumbili adimu wa Diani na jinsi wanavyolindwa.",
+        "description": "A small charity that rescues colobus and other primates hit by traffic or power lines - it "
+        "built the rope 'colobridges' you'll see over Diani Beach Road.",
+        "tips": "Never feed monkeys. Tours are short, so combine with a beach afternoon.",
+        "hours": "Guided tours during the day",
+        "price": "Tour donation",
+        "lat": -4.2722,
+        "lng": 39.5956,
+    },
+    {
+        "name": "Shimba Hills National Reserve",
+        "category": "nature",
+        "area": "diani",
+        "summary": "Forested hills with elephants, rare sable antelope and the Sheldrick Falls hike.",
+        "summary_sw": "Milima ya msitu yenye tembo, palahala adimu na matembezi ya maporomoko ya Sheldrick.",
+        "description": "About 45 minutes inland from Diani and much cooler than the beach. A half-day game drive "
+        "plus the walk down to the falls makes a great change of scene.",
+        "tips": "Book a vehicle with a guide; walking to the falls needs a ranger.",
+        "hours": "Daily 6am-6pm",
+        "price": "KWS park fee plus vehicle",
+        "lat": -4.2500,
+        "lng": 39.4200,
+    },
+    # ---------- food & drink ----------
+    {
+        "name": "Mama Ngina Waterfront",
+        "category": "food",
+        "area": "old-town",
+        "featured": True,
+        "summary": "Sea-front promenade with madafu, cassava crisps and mishkaki at sunset.",
+        "summary_sw": "Ufukwe wa Mama Ngina: madafu, mihogo ya kukaanga na mishkaki wakati wa jioni.",
+        "description": "Mombasa's favourite evening hang-out, facing the ocean entrance to the harbour: watch ships "
+        "come in while vendors grill cassava and mishkaki and crack fresh coconuts.",
+        "tips": "Go from 5pm. Buy from busy stalls; ask for chilli and lime on your cassava.",
+        "hours": "Best 5pm-10pm",
+        "price": "Snacks from KES 50",
+        "lat": -4.0717,
+        "lng": 39.6797,
+    },
+    {
+        "name": "Swahili breakfast in the Old Town",
+        "category": "food",
+        "area": "old-town",
+        "summary": "Mahamri, chai and bajia from the Old Town's early-morning cafes.",
+        "summary_sw": "Mahamri, chai na bajia kwenye mikahawa ya asubuhi ya Mji wa Kale.",
+        "description": "Before the heat, small cafes around the Old Town serve sweet cardamom mahamri, spiced chai, "
+        "viazi karai and bajia. A cheap, delicious start to a day of sightseeing.",
+        "tips": "In Ramadan, cafes open after sunset instead and the lanes come alive at night.",
+        "hours": "6am-10am",
+        "price": "Under KES 300",
+        "lat": -4.0605,
+        "lng": 39.6775,
+    },
+    # ---------- markets & crafts ----------
+    {
+        "name": "Marikiti Market",
+        "category": "markets",
+        "area": "old-town",
+        "summary": "Mombasa's big produce market: tropical fruit, spices and coastal staples.",
+        "summary_sw": "Soko kubwa la Marikiti: matunda, viungo na vyakula vya pwani.",
+        "description": "Crowded, noisy and full of colour: mangoes, passion fruit, cassava, chillies and spice "
+        "stalls. Try fresh sugarcane juice outside.",
+        "tips": "Go early, carry small notes and keep your phone in a front pocket.",
+        "hours": "Mon-Sat from early morning",
+        "price": "Bargain politely",
+        "lat": -4.0593,
+        "lng": 39.6705,
+    },
+    {
+        "name": "Biashara Street",
+        "category": "markets",
+        "area": "old-town",
+        "summary": "The place for kangas and kikois: bright cotton wraps with Swahili sayings.",
+        "summary_sw": "Mahali pa kununua kanga na kikoi zenye misemo ya Kiswahili.",
+        "description": "A long street of fabric shops. Each kanga carries a proverb (jina) - ask the shopkeeper to "
+        "translate yours before you buy.",
+        "tips": "Prices drop for two or more. Shops close for Friday prayers around midday.",
+        "hours": "Mon-Sat 9am-6pm",
+        "price": "Kanga pairs from about KES 600",
+        "lat": -4.0590,
+        "lng": 39.6740,
+    },
+    {
+        "name": "Bombolulu Workshops",
+        "category": "markets",
+        "area": "nyali",
+        "summary": "Jewellery, carvings and textiles made by artisans with disabilities.",
+        "summary_sw": "Vito, vinyago na vitambaa vilivyotengenezwa na mafundi wenye ulemavu.",
+        "description": "Watch artisans at work, then shop fixed-price crafts in the showroom; proceeds support the "
+        "workshops' members.",
+        "tips": "Fixed prices: a relaxed alternative to bargaining in town.",
+        "hours": "Mon-Sat during the day",
+        "price": "Fixed prices",
+        "lat": -4.0168,
+        "lng": 39.7036,
+    },
+    # ---------- culture & faith ----------
+    {
+        "name": "Mandhry Mosque",
+        "category": "culture",
+        "area": "old-town",
+        "summary": "Mombasa's oldest working mosque, from around 1570, with a pointed minaret.",
+        "summary_sw": "Msikiti wa zamani zaidi unaotumika Mombasa, wa karibu 1570.",
+        "description": "A whitewashed landmark at the heart of the Old Town, still in daily use.",
+        "tips": "Admire from outside unless invited in; dress modestly and avoid prayer times.",
+        "hours": "View from outside",
+        "price": "Free",
+        "lat": -4.0617,
+        "lng": 39.6798,
+    },
+    {
+        "name": "Holy Ghost Cathedral",
+        "category": "culture",
+        "area": "old-town",
+        "summary": "Grand Catholic cathedral from the 1920s with tall twin spires.",
+        "summary_sw": "Kanisa kuu la Kikatoliki la miaka ya 1920 lenye minara miwili.",
+        "description": "A cool, peaceful interior with stained glass, on Nkrumah Road near the city centre.",
+        "tips": "Visitors welcome outside service times; dress modestly.",
+        "hours": "Daily, outside services",
+        "price": "Free",
+        "lat": -4.0656,
+        "lng": 39.6692,
+    },
+    {
+        "name": "Jain Temple",
+        "category": "culture",
+        "area": "old-town",
+        "summary": "Ornate white marble Jain temple in Langoni, with intricate carvings.",
+        "summary_sw": "Hekalu la Kijaini la marumaru meupe lenye nakshi nzuri, Langoni.",
+        "description": "One of the most beautiful buildings in the city: marble domes and carved pillars.",
+        "tips": "Remove shoes and leather items; no photos inside without permission.",
+        "hours": "Mornings and evenings",
+        "price": "Free",
+        "lat": -4.0587,
+        "lng": 39.6748,
+    },
+    # ---------- evenings out ----------
+    {
+        "name": "Mtwapa Creek sunset",
+        "category": "evenings",
+        "area": "mtwapa",
+        "summary": "Watch the sun go down over the creek from a waterfront deck.",
+        "summary_sw": "Tazama jua likizama juu ya mkondo wa Mtwapa.",
+        "description": "Mtwapa's creek-side bars and restaurants face west - perfect for sundowners. The town "
+        "has the north coast's liveliest nightlife.",
+        "tips": "Use a registered taxi or Uber/Bolt at night.",
+        "hours": "Sunset about 6:30pm",
+        "price": "Drinks from about KES 300",
+        "lat": -3.9420,
+        "lng": 39.7430,
+    },
+    # ---------- getting around ----------
+    {
+        "name": "Likoni Ferry",
+        "category": "transport",
+        "area": "old-town",
+        "summary": "Free foot ferry from the island to the south coast; cars pay. Queues at rush hour.",
+        "summary_sw": "Kivuko cha Likoni: bure kwa wapita kwa miguu, magari hulipa. Foleni saa za kazi.",
+        "description": "The quickest link from the island to Likoni and the road to Diani. Drivers heading to Diani "
+        "from the airport or SGR can use the Dongo Kundu bypass instead and skip the ferry.",
+        "tips": "Hold children's hands in the crowds. Avoid 7-9am and 5-7pm.",
+        "hours": "24 hours",
+        "price": "Foot passengers free; vehicles pay",
+        "lat": -4.0780,
+        "lng": 39.6670,
+    },
+    {
+        "name": "SGR Mombasa Terminus (Miritini)",
+        "category": "transport",
+        "area": None,
+        "summary": "Madaraka Express trains to Nairobi in about 5-6 hours, via Tsavo.",
+        "summary_sw": "Treni za Madaraka Express kwenda Nairobi kwa saa 5-6, kupitia Tsavo.",
+        "description": "Comfortable daily trains with economy and first class. Watch for elephants in Tsavo. Book "
+        "tickets ahead online or via mobile money; arrive an hour early for security checks.",
+        "tips": "We can meet you at the station: add SGR pickup to your stay.",
+        "hours": "Daily departures",
+        "price": "Economy from about KES 1,500",
+        "lat": -4.0290,
+        "lng": 39.5880,
+    },
+    {
+        "name": "Moi International Airport",
+        "category": "transport",
+        "area": None,
+        "summary": "Mombasa's airport: 20-60 minutes to our homes depending on the area.",
+        "summary_sw": "Uwanja wa ndege wa Mombasa: dakika 20-60 hadi nyumba zetu.",
+        "description": "Domestic and international flights. Uber and Bolt work here; licensed taxis queue outside "
+        "arrivals.",
+        "tips": "We can meet you with a name sign: add Airport pickup to your stay.",
+        "hours": "24 hours",
+        "price": "Taxi to Nyali about KES 1,500-2,000",
+        "lat": -4.0348,
+        "lng": 39.5942,
+    },
+    {
+        "name": "Tuk-tuks, boda bodas and ride-hailing",
+        "category": "transport",
+        "area": None,
+        "summary": "Tuk-tuks for short hops; Uber and Bolt for longer trips. Agree fares first.",
+        "summary_sw": "Bajaji kwa safari fupi; Uber na Bolt kwa safari ndefu. Kubalianeni bei kwanza.",
+        "description": "Tuk-tuks are cheap and everywhere. Boda bodas (motorbike taxis) are fastest but riskiest - "
+        "always wear the helmet. Ride-hailing apps show the price up front.",
+        "tips": "Agree the fare before you get in. Avoid boda bodas at night.",
+        "hours": "All day",
+        "price": "Tuk-tuk hops from about KES 100",
+        "lat": None,
+        "lng": None,
+    },
+    # ---------- health & essentials ----------
+    {
+        "name": "Aga Khan Hospital Mombasa",
+        "category": "essentials",
+        "area": "old-town",
+        "summary": "Private hospital with a 24-hour emergency department.",
+        "summary_sw": "Hospitali ya kibinafsi yenye idara ya dharura saa 24.",
+        "description": "One of the city's main private hospitals, on Vanga Road. Bring ID and your insurance card.",
+        "tips": "Emergency? Call 999 or 112 first, then text HELP to reach Amina.",
+        "hours": "24 hours",
+        "price": "",
+        "lat": -4.0560,
+        "lng": 39.6830,
+    },
+    {
+        "name": "The Mombasa Hospital",
+        "category": "essentials",
+        "area": "old-town",
+        "summary": "Private hospital on Mama Ngina Drive with 24-hour emergency care.",
+        "summary_sw": "Hospitali ya kibinafsi barabara ya Mama Ngina, dharura saa 24.",
+        "description": "A long-established hospital near Fort Jesus, with a pharmacy on site.",
+        "tips": "Emergency? Call 999 or 112 first, then text HELP to reach Amina.",
+        "hours": "24 hours",
+        "price": "",
+        "lat": -4.0690,
+        "lng": 39.6780,
+    },
+]
+
+# weekday: 0 = Monday. Weekly events repeat; dated events (month, day) recur every year.
+EVENTS = [
+    {
+        "title": "Sunset dhow cruise on Tudor Creek",
+        "summary": "Sail out at golden hour with Swahili snacks and the Old Town skyline.",
+        "weekday": 4,
+        "time": "5pm-7:30pm",
+        "price": "KES 4,500 - add it from your trip page",
+        "addon": "dhow_cruise",
+        "area": "old-town",
+    },
+    {
+        "title": "Swahili cooking class with Mama Zawadi",
+        "summary": "Cook biryani, coconut rice and mahamri, then eat what you made.",
+        "weekday": 2,
+        "time": "10am-1pm",
+        "price": "KES 3,500 - add it from your trip page",
+        "addon": "swahili_cooking",
+        "area": "old-town",
+    },
+    {
+        "title": "Old Town heritage walk",
+        "summary": "Two hours through the lanes with a local guide; meet at the Fort Jesus gate.",
+        "weekday": 5,
+        "time": "8:30am",
+        "price": "About KES 1,500",
+        "place": "Old Town heritage lanes",
+        "area": "old-town",
+    },
+    {
+        "title": "Street food night at Mama Ngina Waterfront",
+        "summary": "The whole city comes out for cassava, mishkaki and madafu by the sea.",
+        "weekday": 6,
+        "time": "From 5pm",
+        "price": "Snacks from KES 50",
+        "place": "Mama Ngina Waterfront",
+        "area": "old-town",
+    },
+    {
+        "title": "Jamhuri Day",
+        "summary": "Kenya's independence day: a public holiday - banks close and beaches are busy.",
+        "month": 12,
+        "day": 12,
+        "time": "All day",
+        "price": "",
+    },
+    {
+        "title": "Christmas and Boxing Day",
+        "summary": "Public holidays: book transport early; the coast is at its busiest.",
+        "month": 12,
+        "day": 25,
+        "ends_day": 26,
+        "time": "All day",
+        "price": "",
+    },
+]
+
+
+def seed():
+    """Load the demo guide (idempotent: places are matched by name)."""
+    from datetime import date
+
+    from apps.core.utils import today
+    from apps.properties.models import Area
+
+    from .models import Event, Place
+
+    areas = {a.slug: a for a in Area.objects.all()}
+    places = {}
+    for i, p in enumerate(PLACES):
+        places[p["name"]], _ = Place.objects.update_or_create(
+            name=p["name"],
+            defaults={
+                "category": p["category"],
+                "area": areas.get(p["area"]) if p.get("area") else None,
+                "summary": p["summary"],
+                "summary_sw": p.get("summary_sw", ""),
+                "description": p.get("description", ""),
+                "tips": p.get("tips", ""),
+                "hours": p.get("hours", ""),
+                "price": p.get("price", ""),
+                "latitude": p.get("lat"),
+                "longitude": p.get("lng"),
+                "featured": p.get("featured", False),
+                "sort_order": i,
+            },
+        )
+    year = today().year
+    for e in EVENTS:
+        dated = "month" in e
+        Event.objects.update_or_create(
+            title=e["title"],
+            defaults={
+                "summary": e["summary"],
+                "weekday": e.get("weekday"),
+                "starts_on": date(year, e["month"], e["day"]) if dated else None,
+                "ends_on": date(year, e["month"], e["ends_day"]) if dated and e.get("ends_day") else None,
+                "yearly": dated,
+                "time": e.get("time", ""),
+                "price": e.get("price", ""),
+                "addon_code": e.get("addon", ""),
+                "place": places.get(e.get("place")),
+                "area": areas.get(e.get("area")) if e.get("area") else None,
+            },
+        )
+    return len(places)

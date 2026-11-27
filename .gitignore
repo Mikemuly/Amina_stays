@@ -1,18 +1,29 @@
-# Dependencies
+# Dependencies / virtualenvs
 node_modules/
+.venv/
+__pycache__/
+*.py[cod]
 
 # Secrets — keep .env.example committed, never .env
 .env
 .env.*
 !.env.example
 
-# Local SQLite database (created automatically by db.js)
+# Local data (PostgreSQL cluster, SQLite, uploads, collected static)
+.data/
 *.db
-*.db-journal
-*.db-wal
-*.db-shm
-*.sqlite
 *.sqlite3
+backend/media/
+backend/staticfiles/
+
+# Build output
+frontend/.next/
+frontend/out/
+frontend/next-env.d.ts
+*.tsbuildinfo
+coverage/
+.pytest_cache/
+.ruff_cache/
 
 # Logs
 logs/
@@ -32,4 +43,3 @@ desktop.ini
 
 # Tunnels / misc
 ngrok.yml
-coverage/

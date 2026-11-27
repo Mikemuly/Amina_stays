@@ -1,0 +1,151 @@
+# Backend (ruff + pytest on PostgreSQL 18) and frontend (types + lint) checks, then the all-in-one image
+# (Dockerfile at the repo root) for the Africa's Talking Marketplace.
+#
+# The image is pushed on pushes to main and on tags, once these repository secrets exist (Settings > Secrets and
+# variables > Actions), copied from the marketplace's "AT Registry Credentials":
+#   AT_REGISTRY           the Registry Host, e.g. registry.example.com (if it already ends in /<namespace>, that
+#                         namespace is used as it is)
+#   AT_REGISTRY_USERNAME  the Username
+#   AT_REGISTRY_PASSWORD  the Password
+# Tags: <AT_REGISTRY>/<AT_REGISTRY_USERNAME>/amina-stays:latest and :sha-<short sha> (plus :<tag> for a git tag).
+# Without the secrets, and on pull requests and other branches, the image is only built.
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: amina
+          POSTGRES_PASSWORD: amina
+          POSTGRES_DB: amina
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U amina -d amina"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      # pytest-django creates and drops test_amina next to it (amina owns this server, so CREATEDB and btree_gist work)
+      DATABASE_URL: postgres://amina:amina@localhost:5432/amina
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7
+      # setup-uv publishes no moving major tags since v8, so it's pinned to a release
+      - uses: astral-sh/setup-uv@v10.4.0
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - name: Install (Python version from backend/.python-version; fails if uv.lock is out of date)
+        run: uv sync --locked
+      - name: Lint
+        run: uv run ruff check .
+      - name: Tests
+        run: uv run pytest
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Type check
+        run: npx tsc --noEmit
+      - name: Lint
+        run: npm run lint
+
+  image:
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    env:
+      AT_REGISTRY: ${{ secrets.AT_REGISTRY }}
+      AT_REGISTRY_USERNAME: ${{ secrets.AT_REGISTRY_USERNAME }}
+      AT_REGISTRY_PASSWORD: ${{ secrets.AT_REGISTRY_PASSWORD }}
+      RELEASE: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Push only from main or a tag, and only with registry credentials
+        if: env.RELEASE == 'true' && env.AT_REGISTRY != '' && env.AT_REGISTRY_USERNAME != '' && env.AT_REGISTRY_PASSWORD != ''
+        run: echo "PUSH=true" >> "$GITHUB_ENV"
+
+      - name: Image name and tags
+        id: image
+        run: |
+          short_sha="${GITHUB_SHA::7}"
+          if [ "$PUSH" != "true" ]; then
+            echo "tags=amina-stays:sha-$short_sha" >> "$GITHUB_OUTPUT"
+            echo "Build only: the image is pushed from main or a tag once the AT_REGISTRY* secrets are set."
+            exit 0
+          fi
+          registry="${AT_REGISTRY#*://}"
+          registry="${registry%/}"
+          # image paths are lowercase; a Registry Host that already names the namespace is used as it is
+          case "$registry" in
+            */*) host="${registry%%/*}"; namespace="${registry#*/}" ;;
+            *) host="$registry"; namespace="$AT_REGISTRY_USERNAME" ;;
+          esac
+          repo="$host/$(printf '%s' "$namespace" | tr '[:upper:]' '[:lower:]')/amina-stays"
+          tags="$repo:latest,$repo:sha-$short_sha"
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            tags="$tags,$repo:$(printf '%s' "$GITHUB_REF_NAME" | tr -c 'A-Za-z0-9_.-' '-')"
+          fi
+          # the marketplace's submission form only accepts host/namespace/name:tag in this shape
+          if ! printf '%s' "$repo:latest" | grep -Eq '^(([a-zA-Z0-9][a-zA-Z0-9.-]+)/([a-zA-Z0-9_-]+)/)?([a-zA-Z0-9_-]+):([a-zA-Z0-9_.-]+)$'; then
+            echo "::warning::$repo:latest doesn't match the marketplace's image URL format (host/namespace/name:tag)"
+          fi
+          echo "registry=$host" >> "$GITHUB_OUTPUT"
+          echo "tags=$tags" >> "$GITHUB_OUTPUT"
+          echo "Pushing $tags"
+
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Log in to the Africa's Talking registry
+        if: env.PUSH == 'true'
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ steps.image.outputs.registry }}
+          username: ${{ env.AT_REGISTRY_USERNAME }}
+          password: ${{ env.AT_REGISTRY_PASSWORD }}
+
+      - name: Build (and push from main or a tag)
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: linux/amd64
+          push: ${{ env.PUSH == 'true' }}
+          tags: ${{ steps.image.outputs.tags }}
+          labels: |
+            org.opencontainers.image.title=Amina Stays
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          # a plain image manifest, as `docker push` makes: no attestation index for the registry or its scanner
+          provenance: false
+          sbom: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

@@ -1,0 +1,53 @@
+# Full stack in containers: PostgreSQL 18, Django API (gunicorn), scheduler, Next.js.
+#   docker compose up --build        → http://localhost:3000  (Demo Lab at /demo, host console at /host)
+# Settings come from .env (see .env.example); the values below override the database/URLs for compose.
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: amina
+      POSTGRES_PASSWORD: amina
+      POSTGRES_DB: amina
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U amina -d amina"]
+      interval: 2s
+      retries: 30
+
+  api:
+    build: ./backend
+    env_file: [{ path: .env, required: false }]
+    environment: &backend-env
+      DATABASE_URL: postgres://amina:amina@db:5432/amina
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      DEBUG: ${DEBUG:-1}
+      DEMO: ${DEMO:-1}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,api,.ngrok-free.app,.ngrok.app,.trycloudflare.com}
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py seed_demo &&
+             gunicorn config.wsgi -b 0.0.0.0:8000 -w 3 --threads 4 --keep-alive 0 --access-logfile -"
+    ports: ["8000:8000"]
+    depends_on:
+      db: { condition: service_healthy }
+
+  scheduler:
+    build: ./backend
+    env_file: [{ path: .env, required: false }]
+    environment: *backend-env
+    command: python manage.py run_scheduler
+    depends_on: [api]
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        BACKEND_URL: http://api:8000
+    environment:
+      BACKEND_URL: http://api:8000
+    ports: ["3000:3000"]
+    depends_on: [api]
+
+volumes:
+  pgdata:

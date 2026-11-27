@@ -1,0 +1,28 @@
+# Build context of the all-in-one image (Dockerfile at the repo root). Allowlist: only the folders the
+# Dockerfile copies, so local data (.data/, .env, scratch folders, .git) never reaches the build.
+# (docker-compose builds backend/ and frontend/ with their own .dockerignore files.)
+*
+!backend
+!frontend
+!docker
+
+# ...minus local environments, caches, build output and data inside them
+**/node_modules
+**/.next
+**/.venv
+**/__pycache__
+**/*.py[cod]
+**/.pytest_cache
+**/.ruff_cache
+**/.mypy_cache
+**/coverage
+**/*.tsbuildinfo
+**/.env
+**/.env.*
+**/*.log
+**/.DS_Store
+backend/media
+backend/staticfiles
+backend/tests
+frontend/next-env.d.ts
+frontend/out
